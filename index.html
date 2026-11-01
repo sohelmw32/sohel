@@ -8,6 +8,7 @@
   <meta name="theme-color" content="#F5EFE0">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/fonts.css"><link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@5/dist/email.min.js" defer></script>
   <script src="app.js" defer></script>
 </head>
 <body>
@@ -111,13 +112,15 @@
 
   <section class="section wrap" id="enquire" aria-labelledby="enquiry-title"><div class="enquiry-layout">
     <div><span class="sticker">YOUR NEXT STEP</span><h2 id="enquiry-title">Let’s talk<br>about your build.</h2><p class="intro">Tell me where you’re up to. We’ll start with your plans and what you need to understand about the finance.</p><p>Free initial conversation. No obligation.</p><div class="contact-links"><a href="tel:+61426788938">0426 788 938 <span aria-hidden="true">↗</span></a><a href="mailto:soheltamrakar@mworks.com.au">soheltamrakar@mworks.com.au <span aria-hidden="true">↗</span></a></div><p class="fine">I aim to respond within one business day.</p></div>
-    <form id="enquiry-form" class="enquiry-form"><p class="form-title">Start the conversation</p><p class="fine form-explanation">This prepares an email for you to send. Nothing is submitted from this page.</p>
+    <form id="enquiry-form" class="enquiry-form"><p class="form-title">Start the conversation</p><p class="fine form-explanation">Send your enquiry to Sohel by email. Your details are processed through EmailJS to deliver your message.</p>
       <label for="build-stage">Where are you up to?</label><select id="build-stage" name="stage" required><option value="">Choose your stage</option><option>Exploring a house-and-land package</option><option>Already own land</option><option>Have a building quote or contract</option><option>Something else</option></select>
       <div class="field-row"><div><label for="name">Your name</label><input id="name" name="name" autocomplete="name" maxlength="100" required></div><div><label for="suburb">Build suburb <span>(if known)</span></label><input id="suburb" name="suburb" autocomplete="address-level2" maxlength="100"></div></div>
       <div class="field-row"><div><label for="email">Email</label><input id="email" name="email" type="email" autocomplete="email" maxlength="200" required></div><div><label for="phone">Phone <span>(optional)</span></label><input id="phone" name="phone" type="tel" autocomplete="tel" maxlength="30"></div></div>
       <label for="message">What would you like help with? <span>(optional)</span></label><textarea id="message" name="message" rows="3" maxlength="1000" placeholder="A package you’re considering, repayments, or your next step…"></textarea>
       <p class="fine">Please leave out account numbers and financial documents. <a href="https://mworks.com.au/privacy-policy/" target="_blank" rel="noopener">Privacy policy ↗</a></p>
-      <button class="button" type="submit">Prepare my email <span aria-hidden="true">↗</span></button>
+      <button class="button" type="submit">Send enquiry <span aria-hidden="true">↗</span></button>
+      <p id="enquiry-status" class="fine enquiry-status" role="status" aria-live="polite" aria-atomic="true"></p>
+      <noscript><p>Please enable JavaScript or email <a href="mailto:soheltamrakar@mworks.com.au">soheltamrakar@mworks.com.au</a>.</p></noscript>
       <div class="email-result" id="email-result" hidden aria-live="polite"><p><strong>Your draft is ready.</strong> Open it in your email app, review it and send it to Sohel.</p><a class="button button-small button-white" id="email-link" href="mailto:soheltamrakar@mworks.com.au">Open email app ↗</a><button class="copy-button" id="copy-email" type="button">Copy message</button><label for="prepared-message">Your message</label><textarea id="prepared-message" rows="7" readonly></textarea><p class="fine" id="copy-status"></p></div>
     </form>
   </div></section>

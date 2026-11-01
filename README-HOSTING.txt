@@ -10,7 +10,16 @@ The house illustration is embedded SVG in index.html.
 All website files match the existing published site version 3.
 
 Current limitations preserved:
-- Enquiry form prepares an email draft. The visitor must send it; it does not automatically submit to a CRM.
+- Enquiry form uses EmailJS once serviceId, templateId and publicKey are configured in app.js. Without configuration or if sending fails, it offers an email draft fallback. It does not submit to the MortgageWorks CRM.
 - index.html currently contains noindex,nofollow. Remove that robots tag when ready for search indexing.
 
 Before independently launching, review dated scheme information and confirm company disclosures.
+
+EMAILJS SETUP
+- app.js is configured with the Outlook service and the Sohel website enquiry template. Keep only public identifiers in emailjsConfig; never add a private key or email password.
+- Set the template recipient to soheltamrakar@mworks.com.au in EmailJS; do not use a visitor-controlled recipient.
+- Template variables: {{name}}, {{email}}, {{phone}}, {{stage}}, {{suburb}}, {{message}}. Set Reply-To to {{reply_to}}.
+- Use your connected email service as the sender, not the visitor’s address.
+- Configure allowed domains and EmailJS spam protection as available in your account.
+- Test from localhost or your HTTPS website, including success, failure and mobile behavior. Confirm inbox delivery before launch.
+- Deploy the updated app.js, index.html and styles.css together. The EmailJS SDK loads from jsDelivr.

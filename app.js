@@ -8,5 +8,54 @@ document.querySelectorAll('[data-stage]').forEach(b=>b.addEventListener('click',
 document.querySelectorAll('[data-scheme]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-scheme]').forEach(t=>{const selected=t===b;t.setAttribute('aria-selected',String(selected));t.tabIndex=selected?0:-1});document.querySelector('#scheme-panel').setAttribute('aria-labelledby',b.id);document.querySelector('#scheme-contract').textContent=b.dataset.scheme==='package'?'Have both the land contract and eligible building contract in place before home-loan settlement.':'For land bought from a separate party, enter an eligible building contract within 6 months of home-loan settlement. Confirm the arrangement with your participating lender.';}));
 document.querySelectorAll('[role=tablist]').forEach(list=>list.addEventListener('keydown',event=>{const tabs=[...list.querySelectorAll('[role=tab]')];let i=tabs.indexOf(document.activeElement);if(i<0)return;const vertical=list.getAttribute('aria-orientation')==='vertical';const next=vertical?'ArrowDown':'ArrowRight',previous=vertical?'ArrowUp':'ArrowLeft';if(event.key===next)i=(i+1)%tabs.length;else if(event.key===previous)i=(i-1+tabs.length)%tabs.length;else if(event.key==='Home')i=0;else if(event.key==='End')i=tabs.length-1;else return;event.preventDefault();tabs[i].focus();tabs[i].click()}));
 const menu=document.querySelector('.menu-toggle'),nav=document.querySelector('#main-nav');menu.addEventListener('click',()=>{const open=menu.getAttribute('aria-expanded')!=='true';menu.setAttribute('aria-expanded',String(open));nav.classList.toggle('is-open',open);menu.querySelector('span').textContent=open?'−':'+'});nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.setAttribute('aria-expanded','false');nav.classList.remove('is-open');menu.querySelector('span').textContent='+'}));
-document.querySelector('#enquiry-form').addEventListener('submit',event=>{event.preventDefault();const form=event.currentTarget;if(!form.reportValidity())return;const data=new FormData(form);const body=`Hi Sohel,\n\nI’d like to discuss finance for my build.\n\nName: ${data.get('name')}\nStage: ${data.get('stage')}\nBuild suburb: ${data.get('suburb')||'Not yet decided'}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')||'Not provided'}\n\n${data.get('message')||'Please contact me to discuss the next steps.'}\n\nThanks,\n${data.get('name')}`;document.querySelector('#prepared-message').value=body;document.querySelector('#email-link').href='mailto:soheltamrakar@mworks.com.au?subject='+encodeURIComponent('House & land finance enquiry')+'&body='+encodeURIComponent(body);document.querySelector('#email-result').hidden=false;document.querySelector('#copy-status').textContent='';document.querySelector('#email-result').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});});
+// Public EmailJS identifiers only. Never add email passwords or private keys here.
+const emailjsConfig = {
+  serviceId: 'service_qgh80gk',
+  templateId: 'template_80e2esx',
+  publicKey: 'aekY7kFbGgZwjbY4Q'
+};
+const enquiryForm = document.querySelector('#enquiry-form');
+let enquirySending = false;
+enquiryForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  if (enquirySending || !enquiryForm.reportValidity()) return;
+  const data = new FormData(enquiryForm);
+  const params = Object.fromEntries(['name', 'email', 'phone', 'stage', 'suburb', 'message'].map(key => [key, String(data.get(key) || '').trim()]));
+  params.reply_to = params.email;
+  const body = `Hi Sohel,\n\nI’d like to discuss finance for my build.\n\nName: ${params.name}\nStage: ${params.stage}\nBuild suburb: ${params.suburb || 'Not yet decided'}\nEmail: ${params.email}\nPhone: ${params.phone || 'Not provided'}\n\n${params.message || 'Please contact me to discuss the next steps.'}\n\nThanks,\n${params.name}`;
+  const status = document.querySelector('#enquiry-status');
+  const fallback = document.querySelector('#email-result');
+  const button = enquiryForm.querySelector('[type="submit"]');
+  const buttonLabel = button.innerHTML;
+  fallback.hidden = true;
+  document.querySelector('#copy-status').textContent = '';
+  document.querySelector('#prepared-message').value = body;
+  document.querySelector('#email-link').href = 'mailto:soheltamrakar@mworks.com.au?subject=' + encodeURIComponent('House & land finance enquiry') + '&body=' + encodeURIComponent(body);
+  const ready = Object.values(emailjsConfig).every(value => value.trim()) && typeof window.emailjs?.send === 'function';
+  if (!ready) {
+    status.textContent = 'Online sending is currently unavailable. Please use the email option below to send your enquiry.';
+    fallback.hidden = false;
+    return;
+  }
+  enquirySending = true;
+  button.disabled = true;
+  button.textContent = 'Sending…';
+  enquiryForm.setAttribute('aria-busy', 'true');
+  status.textContent = 'Sending your enquiry…';
+  try {
+    await window.emailjs.send(emailjsConfig.serviceId, emailjsConfig.templateId, params, { publicKey: emailjsConfig.publicKey });
+    status.textContent = 'Thank you. Your enquiry has been sent. Sohel aims to respond within one business day.';
+    enquiryForm.reset();
+    document.querySelector('#prepared-message').value = '';
+    document.querySelector('#email-link').href = 'mailto:soheltamrakar@mworks.com.au';
+  } catch {
+    status.textContent = 'We couldn’t confirm your enquiry was sent. Your details are still here. Try again, or use the email option below.';
+    fallback.hidden = false;
+  } finally {
+    enquirySending = false;
+    button.disabled = false;
+    button.innerHTML = buttonLabel;
+    enquiryForm.removeAttribute('aria-busy');
+  }
+});
 document.querySelector('#copy-email').addEventListener('click',async()=>{const field=document.querySelector('#prepared-message'),status=document.querySelector('#copy-status');try{await navigator.clipboard.writeText(field.value);status.textContent='Copied. Paste it into your email to Sohel.'}catch{field.focus();field.select();status.textContent='Select and copy the message above, then paste it into your email.'}});
